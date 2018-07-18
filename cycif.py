@@ -156,7 +156,7 @@ if __name__ == '__main__':
     if not os.path.exists('output'):
         os.makedirs('output')
     parser = argparse.ArgumentParser(description='Cy-cif segmented psudeo single-cell data Cell State Calling script. Take segmented cycif data and output clustering figures, expression figures and top markers.')
-    parser.add_argument('file_path', nargs='?',default='test3195.csv', help='target data matrix of samples by features.')
+    parser.add_argument('file_path', nargs='?',default='cycif-clustering-example-data.csv', help='target data matrix of samples by features.')
     parser.add_argument('-algo', metavar='Clustering algorithm', nargs='?', default='KMeans', help="Clustering algorithm, select from ['KMeans','HDBSCAN']. KMeans by default.")
     parser.add_argument('-mcs', metavar='Minimal cluster size', nargs='?', default=15, type=int, help='Minimal cluster size for HDBSCAN clustering.')
     parser.add_argument('-nc', metavar='Number of clusters', nargs='?', default=15, type=int, help='Number of clusters for KMeans clustering.')
