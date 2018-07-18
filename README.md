@@ -1,0 +1,33 @@
+# cycif-clustering
+Cell state calling docker app for cycif data
+# Dockerized app for cell clustering and top marker identification from Cycif data. 
+## Preprocessing and normalization
+log2 transformation => robust quantile normalization
+
+## Dimension reduction
+UMAP (Uniform Manifold Approximation and Projection)
+https://github.com/lmcinnes/umap
+
+## Clustering and differential expression analysis
+KMeans and HDBSCAN
+Differential expression based on fold change against overall population (self vs non-self).
+
+## Usage
+### Install
+Build the docker image by `docker build -t cycif-clustering .`.
+Run the app by `docker-compose --rm cycif-clustering`.
+
+### Paremeters
+#### Positional arguments: 
+
+`file_path` points to the name of the segmented cycif pseudo-single-cell data in the `/input` folder.
+
+#### Optional arguments:
+
+`-h` or `--help`: Show this help message and exit.
+
+`-algo`: Clustering algorithm, select from `['KMeans','HDBSCAN']`. KMeans by default.
+
+`-mcs`: Minimal cluster size for HDBSCAN clustering, only for HDBSCAN.
+
+`-nc`: Number of clusters for KMeans clustering.
