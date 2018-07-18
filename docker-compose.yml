@@ -1,0 +1,31 @@
+# Version of Docker-Compose (Not the image)
+version: "3"
+
+services:
+
+  # Name of this "service"
+  cycif:
+
+    # Reference: https://docs.docker.com/compose/compose-file/#image
+    # The name of the image locally and/or from docker-hub
+    image: cycif
+
+    # Reference: https://docs.docker.com/compose/compose-file/#short-syntax-3
+    volumes:
+     # Relative path to the host location of the configuration files (Could also
+     # be an absolute path). Is mounted inside the container at /config.
+     # Mounted read-only for safety.
+     - ./config/:/config:ro
+     # Relative path to the host location containing the input data (Could also
+     # be an absolute path). Is mounted inside the container at /input.
+     # Mounted read-only for safety.
+     - ./input/:/input:ro
+     # Absolute path to a location to put the output on the host (Could also be
+     # an absolute path). Is mounted inside the container at /output
+     - ./output/:/output
+
+    # Reference: https://docs.docker.com/compose/compose-file/#environment
+    environment:
+     # An example of an environment variable which is used by the containerized
+     # application.
+     - UPPERCASE=True

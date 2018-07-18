@@ -1,0 +1,6 @@
+group,Top 5 markers,Markers exp
+Cluster 0,"CD3, CD4, ASMA, CD45RB, FOXP3","0.77, 0.42, 0.32, 0.28, 0.26"
+Cluster 1,"Keratin, LaminAC, Ki67, LaminB, CD20","1.92, 0.64, 0.41, 0.12, 0.09"
+Cluster 2,"GFAP, CD68, CD163, IBA1, CD14","1.86, 0.77, 0.55, 0.28, 0.26"
+Cluster 3,"ASMA, CD11b, CD45RB, FOXP3, CD21","0.63, 0.58, 0.1, 0.09, 0.08"
+Cluster 4,"CD68, CD163, ASMA, CD14, IBA1","0.31, 0.29, 0.26, 0.24, 0.19"
