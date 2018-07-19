@@ -15,7 +15,7 @@ Differential expression based on fold change against overall population (self vs
 ## Usage
 ### Install
 Build the docker image by `docker build -t cycif-clustering .`.
-Run the app by `docker-compose --rm cycif-clustering`.
+Run the app by `docker-compose run --rm cycif-clustering`.
 
 ### Paremeters
 #### Positional arguments: 
