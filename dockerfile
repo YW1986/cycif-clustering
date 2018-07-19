@@ -1,6 +1,7 @@
 FROM python:3.6
 COPY requirements.txt /tmp/
-RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
+RUN 	pip install --no-cache-dir Cython &&\
+	pip install --no-cache-dir -r /tmp/requirements.txt && \
 	mkdir /input && \
 	mkdir /output
 VOLUME /input
