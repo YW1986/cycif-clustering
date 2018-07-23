@@ -14,8 +14,8 @@ Differential expression based on fold change against overall population (self vs
 
 ## Usage
 ### Install
-Build the docker image by `docker build -t cycif-clustering .`.
-Run the app by `docker-compose run --rm cycif-clustering`.
+Build the docker image by `docker build -t cycif-clustering .`
+Run the app by `docker-compose run --rm cycif-clustering`
 
 ### Paremeters
 #### Positional arguments: 
@@ -31,3 +31,10 @@ Run the app by `docker-compose run --rm cycif-clustering`.
 `-mcs`: Minimal cluster size for HDBSCAN clustering, only for HDBSCAN.
 
 `-nc`: Number of clusters for KMeans clustering.
+
+# Example
+#### Data projection on 2D UMAP transformed data.
+![alt text](/output/Clustering_on_2D.png)
+
+#### Marker expression in the transformed 2D data.
+![alt text](/output/raw%20expr%20on%202D.png)
