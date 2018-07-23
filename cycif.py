@@ -7,6 +7,7 @@ Cy-cif segmented psudeo single-cell data Cell State Calling script
 import os
 import pandas as pd
 import numpy as np
+import yaml
 
 import matplotlib
 # Force matplotlib to not use any Xwindows backend.
@@ -15,7 +16,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from sklearn import preprocessing
 from sklearn.cluster import KMeans
-from hdbscan import HDBSCAN
+# from hdbscan import HDBSCAN
 import umap
 import argparse
 
@@ -155,11 +156,19 @@ if __name__ == '__main__':
     # Parse all necessary arguments
     if not os.path.exists('output'):
         os.makedirs('output')
-    parser = argparse.ArgumentParser(description='Cy-cif segmented psudeo single-cell data Cell State Calling script. Take segmented cycif data and output clustering figures, expression figures and top markers.')
-    parser.add_argument('file_path', nargs='?',default='cycif-clustering-example-data.csv', help='target data matrix of samples by features.')
-    parser.add_argument('-algo', metavar='Clustering algorithm', nargs='?', default='KMeans', help="Clustering algorithm, select from ['KMeans','HDBSCAN']. KMeans by default.")
-    parser.add_argument('-mcs', metavar='Minimal cluster size', nargs='?', default=15, type=int, help='Minimal cluster size for HDBSCAN clustering.')
-    parser.add_argument('-nc', metavar='Number of clusters', nargs='?', default=15, type=int, help='Number of clusters for KMeans clustering.')
+    with open('./config/cycif.yml') as f:
+        config = yaml.load(f)
+
+    file_path = config['file_path']
+    algorithm = config['algo']
+    n_clusters = config['nc']
+    mix_cluster_size = config['mcs']
+
+    parser = argparse.ArgumentParser(description='Cy-cif segmented psudeo single-cell data Cell State Calling script. ')
+    parser.add_argument('file_path', nargs='?',default=file_path, help='Target data matrix of samples by features. Take segmented cycif data and output clustering figures, expression figures and top markers. Will use example file in /input folder by default.')
+    parser.add_argument('-algo', metavar='Clustering algorithm', nargs='?', default=algorithm, help="Clustering algorithm, select from ['KMeans','HDBSCAN']. KMeans by default.")
+    parser.add_argument('-mcs', metavar='Minimal cluster size', nargs='?', default=mix_cluster_size, type=int, help='Minimal cluster size for HDBSCAN clustering. 15 by default.')
+    parser.add_argument('-nc', metavar='Number of clusters', nargs='?', default=n_clusters, type=int, help='Number of clusters for KMeans clustering. 15 by default.')
     args = parser.parse_args()
     # Read data from dropbox, synpase or local
     df_raw = get_data(args.file_path)

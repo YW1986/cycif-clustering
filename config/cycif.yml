@@ -1,0 +1,4 @@
+file_path: cycif-clustering-example-data.csv
+algo: KMeans
+mcs: 15
+nc: 15

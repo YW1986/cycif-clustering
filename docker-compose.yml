@@ -19,7 +19,7 @@ services:
      # Relative path to the host location containing the input data (Could also
      # be an absolute path). Is mounted inside the container at /input.
      # Mounted read-only for safety.
-     - ./example data/:/input:ro
+     - ./input/:/input:ro
      # Absolute path to a location to put the output on the host (Could also be
      # an absolute path). Is mounted inside the container at /output
      - ./output/:/output

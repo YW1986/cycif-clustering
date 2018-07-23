@@ -1,4 +1,5 @@
 sklearn
+yaml
 numpy
 pandas
 hdbscan
