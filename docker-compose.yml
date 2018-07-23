@@ -4,11 +4,11 @@ version: "3"
 services:
 
   # Name of this "service"
-  cycif:
+  drclust:
 
     # Reference: https://docs.docker.com/compose/compose-file/#image
     # The name of the image locally and/or from docker-hub
-    image: cycif
+    image: drclust
 
     # Reference: https://docs.docker.com/compose/compose-file/#short-syntax-3
     volumes:
