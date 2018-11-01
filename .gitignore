@@ -1,4 +1,5 @@
 *.ppm
 .DS_Store
 ._*
-output/
+.output/
+._pycache_/

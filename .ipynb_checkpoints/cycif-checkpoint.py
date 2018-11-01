@@ -11,7 +11,7 @@ import yaml
 import matplotlib.pyplot as plt
 from sklearn import preprocessing
 from sklearn.cluster import KMeans
-from hdbscan import HDBSCAN
+# from hdbscan import HDBSCAN
 import umap
 import argparse
 
@@ -96,7 +96,8 @@ def clustering(df_low_dim,
     
     """
     if algorithm == 'HDBSCAN':
-        clustering = HDBSCAN(min_samples=hdbscan_min_cluster_size)
+        import hdbscan
+        clustering = DBSCAN(min_samples=hdbscan_min_cluster_size)
     else:
         clustering = KMeans(K_means_n_clusters)
     labels = clustering.fit_predict(df_low_dim)
@@ -150,16 +151,13 @@ def get_top_markers(df_raw_expr,df_labels):
 
 if __name__ == '__main__':
     # only suppress Xwindows backend when called as main.
-    # import matplotlib
+    import matplotlib
     # Force matplotlib to not use any Xwindows backend.
-    # matplotlib.use('Agg')
+    matplotlib.use('Agg')
     # Parse all necessary arguments
     if not os.path.exists('output'):
         os.makedirs('output')
-    print(os.listdir()) 
-    print(os.listdir('input'))
-    print(os.listdir('config'))
-    with open('config/cycif.yml') as f:
+    with open('./config/cycif.yml') as f:
         config = yaml.load(f)
 
     file_path = config['file_path']
