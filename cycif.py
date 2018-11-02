@@ -8,15 +8,13 @@ import os
 import pandas as pd
 import numpy as np
 import yaml
-
-import matplotlib
-# Force matplotlib to not use any Xwindows backend.
-matplotlib.use('Agg')
-
+# import matplotlib
+# # Force matplotlib to not use any Xwindows backend.
+# matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from sklearn import preprocessing
 from sklearn.cluster import KMeans
-# from hdbscan import HDBSCAN
+from hdbscan import HDBSCAN
 import umap
 import argparse
 
@@ -62,13 +60,16 @@ def get_data(filepath):
     return data
 
 
-def preprocess_and_normalize(df_raw_expr):
+def preprocess_and_normalize(df_raw_expr, keep_location_data=False):
     new_index = ['cell_'+str(x) for x in df_raw_expr.index]
     df_raw_expr.index = new_index
-    valid_cols = [x for x in df_raw_expr.columns if ('hoechst' not in x.lower())&(x.lower() not in ['x','y','frame', 'area','circ','xt','yt','rows','cols'])]
+    # valid_cols = [x for x in df_raw_expr.columns if ('hoechst' not in x.lower())&(x.lower() not in ['x','y','frame', 'area','circ','xt','yt','rows','cols'])]
     # downsampling the data by location but taking 
-    df_location = df_raw_expr[['Xt','Yt']]
-    df_raw_expr = df_raw_expr[valid_cols]
+    if keep_location_data:
+        df_location = df_raw_expr[['Xt','Yt']]
+    else:
+        df_location = None
+    # df_raw_expr = df_raw_expr[valid_cols]
     df_raw_expr = np.log10(df_raw_expr+1)
     # Use quantile transformation to mitigate outlier effects
     # ?df_norm = preprocessing.quantile_transform(df_raw_expr,n_quantiles=1000,copy=True,output_distribution='normal')
@@ -101,10 +102,10 @@ def clustering(df_low_dim,
     
     """
     if algorithm == 'HDBSCAN':
-        hdbscan_min_cluster_size
+        clustering = HDBSCAN(min_cluster_size=hdbscan_min_cluster_size)
     else:
-        kmeans = KMeans(K_means_n_clusters)
-    labels = kmeans.fit_predict(df_low_dim)
+        clustering = KMeans(K_means_n_clusters)
+    labels = clustering.fit_predict(df_low_dim)
     df_labels = pd.Series(['Cluster ' + str(x) for x in labels])
     return df_labels
 
@@ -126,13 +127,19 @@ def plot_expr_on_2D(df_2d,df_raw_expr):
     """
     plt.ioff()
     nrows = int(np.ceil(len(df_raw_expr.columns)/5))
-    fig, ax = plt.subplots(nrows, 5, sharex='col', sharey='row',squeeze=False,figsize=(25,5*nrows))
-    for i in range(nrows):
-        for j in range(5):
-            colname = df_raw_expr.columns[5*i+j]
-            subplot = ax[i,j].scatter(df_2d[:,0],df_2d[:,1],c = df_raw_expr[colname].values,s = 0.01, cmap='bwr',label = colname)
-            ax[i,j].legend(frameon=False)
-            fig.colorbar(subplot,ax=[ax[i,j],ax[i,j]],pad=-0.05,extend='both',format='%.1f')
+    fig, axes = plt.subplots(nrows, 5, sharex='col', sharey='row',squeeze=False,figsize=(25,5*nrows))
+    axes = axes.ravel()
+    axes_idx = 0
+    for col in df_raw_expr.columns:
+        subplot = axes[axes_idx].scatter(df_2d[:,0],df_2d[:,1],c = df_raw_expr[col].values,s = 0.01, cmap='bwr',label = col)
+        axes[axes_idx].legend(frameon=False)
+        fig.colorbar(subplot,ax=[axes[axes_idx],axes[axes_idx]],pad=-0.05,extend='both',format='%.1f')
+    # for i in range(nrows):
+    #     for j in range(5):
+    #         colname = df_raw_expr.columns[5*i+j]
+    #         subplot = ax[i,j].scatter(df_2d[:,0],df_2d[:,1],c = df_raw_expr[colname].values,s = 0.01, cmap='bwr',label = colname)
+    #         ax[i,j].legend(frameon=False)
+    #         fig.colorbar(subplot,ax=[ax[i,j],ax[i,j]],pad=-0.05,extend='both',format='%.1f')
     plt.savefig('raw expr on 2D.png',bbox_inches='tight')
 
 def get_top_markers(df_raw_expr,df_labels):
@@ -163,6 +170,7 @@ if __name__ == '__main__':
     algorithm = config['algo']
     n_clusters = config['nc']
     mix_cluster_size = config['mcs']
+    cfg_genes = config['markers']
 
     parser = argparse.ArgumentParser(description='Cy-cif segmented psudeo single-cell data Cell State Calling script. ')
     parser.add_argument('file_path', nargs='?',default=file_path, help='Target data matrix of samples by features. Take segmented cycif data and output clustering figures, expression figures and top markers. Will use example file in /input folder by default.')
@@ -172,8 +180,17 @@ if __name__ == '__main__':
     args = parser.parse_args()
     # Read data from dropbox, synpase or local
     df_raw = get_data(args.file_path)
+    cm_genes = [x for x in cfg_genes if x in df_raw.columns]
+    if len(cm_genes) < len(cfg_genes):
+        print('Dropped genes in config file only: {}'.format(', '.join(genes_in_cfg_only)))
+        genes_in_cfg_only = [x for x in cfg_genes if x not in df_raw.columns]
+    elif len(cm_genes) < df_raw.shape[1]:
+        genes_in_input_only =[x for x in df_raw.columns if x not in cfg_genes]
+        print('Dropped genes in input file only: {}'.format(', '.join(genes_in_input_only)))
+
+    df_raw =df_raw[cm_genes]
     # preprocessing
-    df_raw, df_location, df_norm = preprocess_and_normalize(df_raw)
+    df_raw, _, df_norm = preprocess_and_normalize(df_raw)
     # Dimention reduction.
     df_umap = dimention_reduction(df_norm)
     # Clustering based on selected algorithm.
